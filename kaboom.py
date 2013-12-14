@@ -1,20 +1,18 @@
-#/usr/bin/python
+#!/usr/bin/env python
 
 from app import App
 import argparse
 
 
-parser = argparse.ArgumentParser(description='Kaboom arguments.')
-parser.add_argument('strings', metavar='proc', type=str, nargs='+',
-                    help='processes')
-
-args = parser.parse_args()
-# print args.accumulate(args.strings)
-
-allowed_proce = ['add', 'remove', 'show']
-
-
 def run():
+    parser = argparse.ArgumentParser(description='Kaboom arguments.')
+    parser.add_argument('strings', metavar='proc', type=str, nargs='+',
+                        help='processes')
+
+    args = parser.parse_args()
+    # print args.accumulate(args.strings)
+
+    allowed_proc = ['add', 'remove', 'show']
     application = App()
     proc = args.strings[0]
     # print 'Command: %s' % proc
