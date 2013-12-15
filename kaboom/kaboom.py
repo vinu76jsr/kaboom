@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-import sys
 import argparse
-
-from rethinkdb import RqlDriverError
-
 from app import App
 
 
@@ -17,14 +13,8 @@ def run():
         command = 'help'
     else:
         command = args.action[0]
-    try:
-        application = App()
-    except RqlDriverError as rde:
-        sys.exit('''No running rethinkdb instance found\n'''
-                 '''Kaboom expects a running rethinkdb instance\n'''
-                 '''on localhost at default port''')
-    # proc = args.action[0]
-    # print 'Command: %s' % proc
+    application = App()
+
     if not hasattr(application, command):
         print "Command `%s` not found" % command
     else:
@@ -33,7 +23,6 @@ def run():
             application.call(command, *sub_commands)
         else:
             application.call(command)
-
 
 
 if __name__ == "__main__":

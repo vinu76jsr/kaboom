@@ -1,8 +1,7 @@
-DB_NAME = 'kaboom'
-TABLE_NAME = 'commands'
+STORE_NAME = '.kaboom.json'
 HELP = '''
 Usage ---  kaboom [-h] action [...]
-  kaboom: help ---------------------------------------------------
+  kaboom: help -------------------------------------------------------
 
   kaboom                        this help text
   kaboom help                   this help text
@@ -14,6 +13,8 @@ Usage ---  kaboom [-h] action [...]
 
   kaboom delete <name>          Remove key <name>
   kaboom delete all             Remove all keys
+
+  kaboom update <name> <value>  Updates name's value to supplied value
 
   all other documentation is located at:
     https://github.com/vinu76jsr/kaboom

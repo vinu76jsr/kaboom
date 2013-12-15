@@ -1,13 +1,17 @@
+import os
 import sys
-
-try:
-    import rethinkdb as r
-except ImportError:
-    r = None
-from constants import DB_NAME, TABLE_NAME, HELP
+import json
+from os.path import expanduser
+from constants import HELP, STORE_NAME
 
 
-connection = None
+home_dir = expanduser('~')
+
+
+def _exit(message):
+    if Store.file_obj:
+        Store.file_obj.close()
+    sys.exit(message)
 
 
 class Command(object):
@@ -28,104 +32,122 @@ class Group(object):
         return len(self.commands)
 
 
-class DB(object):
+class Store(object):
+
+    file_obj = None
+    data = None
+    _path = os.path.join(home_dir, STORE_NAME)
 
     @classmethod
-    def initialize_db(cls):
-        r.db_create(DB_NAME).run(connection)
-        cls.create_tables()
+    def init_data(cls):
+        if os.path.exists(cls._path):
+            with open(cls._path, 'r') as file_obj:
+                _data = file_obj.read()
+                cls.data = json.loads(_data)  # data is loaded
+            if cls.data is None:
+                _exit('Store load failed with')
+        else:
+            with open(cls._path, 'w+') as _:  # create the file
+                cls.data = {}
+                _.write(json.dumps(cls.data))
+
 
     @classmethod
-    def create_tables(cls):
-        r.db(DB_NAME).table_create(TABLE_NAME).run(connection)
+    def close(cls):
+        cls.save()
+
+    @classmethod
+    def save(cls):
+        if cls.file_obj:
+            cls.close()
+
+        if Store.data is not None:
+            with open(cls._path, 'w+') as file_obj:
+                file_obj.write(json.dumps(Store.data))
 
 
 class App(object):
 
-    LIST = 'list'
-    COMMAND = 'command'
-
-    TYPE = (LIST, COMMAND)
-
     def __init__(self):
-        if not r:
-            sys.exit('RethinkDB not found, exiting...')
-        global connection
-        connection = r.connect('localhost', 28015)
-        self.connection = connection
-        if not connection:
-            print "database is not available"
-            return
-        self.bootstrap()
-
-    def bootstrap(self):
-        """
-        simple list,
-        each element has
-        1. command name  - index command here
-        2. type - command or list
-
-        """
-        if DB_NAME in r.db_list().run(self.connection):
-            # print "Database already initialized"
-            return
-        DB.initialize_db()
+        Store.init_data()
+        if Store.data is None:
+            _exit('Cannot initialize data')
+        # Now we have store taken care of start working
 
     def call(self, proc, *arguments):
         attr = getattr(self, proc)
         attr(*arguments)
+        Store.close()
 
     def show(self, *args):
         if not args:
-            sys.exit('What to show?')
+            _exit('What to show?')
         # print 'show called with args %s' % args
         if len(args) > 1:
-            sys.exit('Too many arguments')
+            _exit('Too many arguments')
         name = args[0]
         if name == 'all':
-            items = r.db(DB_NAME).table(TABLE_NAME).run(connection)
-            print "Showing all items"
-            for item in items:
-                print '%s : %s' % (item['name'], item['value'])
-            sys.exit()
+            if len(Store.data):
+                print "Showing all items"
+                for name, value in Store.data.iteritems():
+                    print '%s : %s' % (name, value)
+                return
+            else:
+                print "Nothing to show"
+                return
         # print 'show called with %s arguments:%s' % (len(args), args)
-        if r.db(DB_NAME).table(TABLE_NAME).filter(r.row["name"] == name).count().run(connection):
-            item = r.db(DB_NAME).table(TABLE_NAME).filter(r.row["name"] == args[0]).run(connection)
-            print [_ for _ in item][0]['value']
+        if name in Store.data:
+            print Store.data[name]
         else:
-            sys.exit('%s not present' % args[0])
-        #TODO now we know element is in database fetch it and show
+            _exit('%s not present' % args[0])
 
     def add(self, *args):
         if not args:
-            sys.exit('adding Nothing')
+            print 'adding Nothing'
+            return
         # check if same name is present as a command
         name = args[0]
         if len(args) < 2:
-            sys.exit('provide value for %s' % name)
+            print 'provide value for %s' % name
+            return
         value = ' '.join(args[1:])
         # add as a command
-        if not r.db(DB_NAME).table(TABLE_NAME).filter(r.row["name"] == args[0]).count().run(connection):
-            r.db(DB_NAME).table(TABLE_NAME).insert({
-                'name': name,
-                'value': value
-            }).run(connection)
-
+        if name not in Store.data:
+            Store.data[name] = value
             print "Value %s added for item %s" % (value, name)
         else:
-            print "already present in database, use update if you want to change it"
+            print "already present, use update(Not supported yet) if you want to change it"
 
     def delete(self, *args):
         if not args:
-            sys.exit('Pass all to delete everything')
+            print 'Pass all to delete everything'
+            return
         if args[0] == 'all':
-            items_to_be_deleted = r.db(DB_NAME).table(TABLE_NAME).count().run(connection)
-            r.db(DB_NAME).table(TABLE_NAME).delete().run(connection)
-            sys.exit('Deleted everything(%s items)!' % items_to_be_deleted)
+            items_to_be_deleted = len(Store.data)
+            Store.data = {}
+            print 'Deleted everything(%s items)!' % items_to_be_deleted
+            return
         name = args[0]
 
-        r.db(DB_NAME).table(TABLE_NAME).filter(r.row["name"] == name).delete().run(connection)
+        Store.data.pop(name, None)
         print "Deleted %s" % name
+
+    def update(self, *args):
+        if not args:
+            print 'update what?'
+            return
+        if len(args) < 2:
+            print "require at least 2 arguments"
+            return
+        name = args[0]
+        value = ' '.join(args[1:])
+
+        if name not in Store.data:
+            print "%s not in Store, adding" % name
+            self.add(name, value)
+            return
+        else:
+            Store.data[name] = value
 
     def help(self):
         print HELP
