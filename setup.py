@@ -11,7 +11,6 @@ setup(
     author_email='vinu76jsr@gmail.com',
     license='bsd3',
     description='Command line key-value store',
-    install_requires=['rethinkdb'],
     entry_points={'console_scripts': [
         'kaboom = kaboom.kaboom:run']}
 )

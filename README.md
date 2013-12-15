@@ -7,7 +7,6 @@ Kaboom is a command line python application which can be used to store text snip
 ###Prerequisite
 
 1. Python
-2. Running instance of rethinkdb     (`brew install rethinkdb`)
 3. MacOSX (should work on linux but not tested)
 
 ###installation
@@ -23,6 +22,7 @@ Kaboom is a command line python application which can be used to store text snip
 * `kaboom delete all` - empty up the database
 * `kaboom` - show help message
 * `kaboom help` - show help message
+* `kaboom update <key> <value>` - update key's value to value
 
 
 
