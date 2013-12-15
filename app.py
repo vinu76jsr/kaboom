@@ -4,7 +4,7 @@ try:
     import rethinkdb as r
 except ImportError:
     r = None
-from constants import DB_NAME, TABLE_NAME
+from constants import DB_NAME, TABLE_NAME, HELP
 
 
 connection = None
@@ -126,6 +126,9 @@ class App(object):
 
         r.db(DB_NAME).table(TABLE_NAME).filter(r.row["name"] == name).delete().run(connection)
         print "Deleted %s" % name
+
+    def help(self):
+        print HELP
 
 
 

@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath('.'))
 
 setup(
     name='kaboom',
-    version='0.1.4',
+    version='0.1.5',
     packages=[''],
     url='http://github.com/vinu76jsr/kaboom',
     license='',

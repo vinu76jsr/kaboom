@@ -21,6 +21,8 @@ Kaboom is a command line python application which can be used to store text snip
 * `kaboom add <key> <value>` - add scriptname to database
 * `kaboom delete <key>` - delete key from database
 * `kaboom delete all` - empty up the database
+* `kaboom` - show help message
+* `kaboom help` - show help message
 
 
 
