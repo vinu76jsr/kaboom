@@ -1,5 +1,7 @@
 #Kaboom - Command line key value store
 
+[![PyPI version](https://badge.fury.io/py/kaboom.png)](http://badge.fury.io/py/kaboom)
+
 Inspired by [Boom](http://zachholman.com/boom/)
 
 Kaboom is a command line python application which can be used to store text snippets.
