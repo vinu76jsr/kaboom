@@ -10,7 +10,7 @@ from app import App
 def run():
     parser = argparse.ArgumentParser(description='Command line key-value store.',
                                      add_help=False, )
-    parser.add_argument('action', metavar='action', nargs='+', help='action')
+    parser.add_argument('action', metavar='action', nargs='*', help='action')
     args = parser.parse_args()
     # command = args or 'help'
     if not args.action:
