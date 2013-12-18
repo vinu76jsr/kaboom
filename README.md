@@ -31,3 +31,7 @@ Kaboom is a command line python application which can be used to store text snip
 
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/vinu76jsr/kaboom/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
