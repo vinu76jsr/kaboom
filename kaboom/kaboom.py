@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from app import App
+from utils import did_you_mean
 
 
 def run():
@@ -16,7 +17,8 @@ def run():
     application = App()
 
     if not hasattr(application, command):
-        print "Command `%s` not found, try %s" % (command, ', '.join(App.SUPPORTED_COMMANDS))
+        print "Command `%s` not found, Did you mean `%s`" % (command,
+                                                             did_you_mean(command, App.SUPPORTED_COMMANDS))
     else:
         sub_commands = args.action[1:] if args.action else None
         if sub_commands:
