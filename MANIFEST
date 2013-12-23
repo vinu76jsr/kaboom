@@ -4,3 +4,4 @@ kaboom/__init__.py
 kaboom/app.py
 kaboom/constants.py
 kaboom/kaboom.py
+kaboom/utils.py
