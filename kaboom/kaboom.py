@@ -16,7 +16,7 @@ def run():
     application = App()
 
     if not hasattr(application, command):
-        print "Command `%s` not found" % command
+        print "Command `%s` not found, try %s" % (command, ', '.join(App.SUPPORTED_COMMANDS))
     else:
         sub_commands = args.action[1:] if args.action else None
         if sub_commands:

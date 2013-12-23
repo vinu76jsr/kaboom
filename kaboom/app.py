@@ -68,18 +68,37 @@ class Store(object):
 
 class App(object):
 
+    HELP = 'help'
+    SHOW = 'show'
+    ADD = 'add'
+    DELETE = 'delete'
+    UPDATE = 'update'
+
+    SUPPORTED_COMMANDS = (HELP, SHOW, ADD, DELETE, UPDATE)
+
     def __init__(self):
         Store.init_data()
         if Store.data is None:
             _exit('Cannot initialize data')
         # Now we have store taken care of start working
 
-    def call(self, proc, *arguments):
-        attr = getattr(self, proc)
+    def call(self, command, *arguments):
+        if command not in self.SUPPORTED_COMMANDS:
+            print ("Command `%s` is not supported, "
+                   "try one of following commands - %s " % (command,
+                                                            ', '.join(self.SUPPORTED_COMMANDS)))
+            return
+        try:
+            attr = getattr(self, command)
+        except AttributeError:
+            print ("Command proc is not supported, "
+                   "try one of following commands %s " % str(self.SUPPORTED_COMMANDS))
+            return
         attr(*arguments)
         Store.close()
 
-    def show(self, *args):
+    @staticmethod
+    def show(*args):
         if not args:
             _exit('What to show?')
         # print 'show called with args %s' % args
@@ -101,7 +120,8 @@ class App(object):
         else:
             _exit('%s not present' % args[0])
 
-    def add(self, *args):
+    @staticmethod
+    def add(*args):
         if not args:
             print 'adding Nothing'
             return
@@ -118,7 +138,8 @@ class App(object):
         else:
             print "already present, use update(Not supported yet) if you want to change it"
 
-    def delete(self, *args):
+    @staticmethod
+    def delete(*args):
         if not args:
             print 'Pass all to delete everything'
             return
