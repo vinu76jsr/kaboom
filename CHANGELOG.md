@@ -1,3 +1,7 @@
+### 0.2.6
+
+* lists supported commands
+
 ### 0.2.5
 
 * Dropped support for rethinkdb,
