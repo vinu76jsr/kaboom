@@ -1,3 +1,9 @@
+### 0.2.8
+
+* added fabfile
+* no user facing changes
+* pypi readme update
+
 ### 0.2.6
 
 * lists supported commands
