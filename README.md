@@ -17,11 +17,11 @@ Kaboom is a command line python application which can be used to store text snip
 
 ###Usage
 
-* `kaboom show all` - shows all available scripts
+* `kaboom show all` - shows all available key's
 * `kaboom show <key>` - shows script for <script-name>
-* `kaboom add <key> <value>` - add scriptname to database
-* `kaboom delete <key>` - delete key from database
-* `kaboom delete all` - empty up the database
+* `kaboom add <key> <value>` - add key to store
+* `kaboom delete <key>` - delete key from store
+* `kaboom delete all` - empty up the store
 * `kaboom` - show help message
 * `kaboom help` - show help message
 * `kaboom update <key> <value>` - update key's value to value
