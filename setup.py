@@ -21,5 +21,5 @@ setup(
     entry_points={'console_scripts': [
         'kaboom = kaboom.kaboom:run']},
     long_description=long_description,
-    install_requires=["termcolor >= 1.1.1", ]
+    install_requires=["termcolor >= 1.1.0", ]
 )
