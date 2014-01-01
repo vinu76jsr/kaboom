@@ -118,7 +118,12 @@ class App(object):
         if name in Store.data:
             print Store.data[name]
         else:
-            _exit('%s not present' % args[0])
+            print "%s not present" % args[0]
+            from utils import did_you_mean
+            guessed_key = did_you_mean(name, Store.data.keys())
+            print "Did you mean : %s" % guessed_key
+            print "%s : %s" % (guessed_key, Store.data[guessed_key])
+            # _exit('%s not present' % args[0])
 
     @staticmethod
     def add(*args):
@@ -165,7 +170,9 @@ class App(object):
 
         if name not in Store.data:
             print "%s not in Store, adding" % name
-            self.add(name, value)
+            from utils import did_you_mean
+            guessed_name = did_you_mean(name, Store.data.keys())
+            _exit("Did you mean : %s" % guessed_name)
             return
         else:
             Store.data[name] = value

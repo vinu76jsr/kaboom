@@ -1,6 +1,10 @@
+### 0.3
+
+* Fuzzy matching for `update` and `show` commands
+
 ### 0.2.8
 
-* added fabfile
+* added `fabfile.py`
 * no user facing changes
 * pypi readme update
 
