@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
+from termcolor import colored
 from app import App
+from constants import ERROR_COLOR, KEY_COLOR, INFO_COLOR
 from utils import did_you_mean
 
 
@@ -17,8 +19,11 @@ def run():
     application = App()
 
     if not hasattr(application, command):
-        print "Command `%s` not found, Did you mean `%s`" % (command,
-                                                             did_you_mean(command, App.SUPPORTED_COMMANDS))
+        print (colored('Command `', ERROR_COLOR) +
+               colored(command, INFO_COLOR) +
+               colored('`not found, Did you mean `', ERROR_COLOR) +
+               colored(did_you_mean(command, App.SUPPORTED_COMMANDS), KEY_COLOR) +
+               colored('`', ERROR_COLOR))
     else:
         sub_commands = args.action[1:] if args.action else None
         if sub_commands:

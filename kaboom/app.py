@@ -2,7 +2,8 @@ import os
 import sys
 import json
 from os.path import expanduser
-from constants import HELP, STORE_NAME
+from termcolor import colored
+from constants import HELP, STORE_NAME, ERROR_COLOR, SUCCESS_COLOR, SEPARATOR_COLOR, KEY_COLOR, VALUE_COLOR, INFO_COLOR
 
 
 home_dir = expanduser('~')
@@ -84,15 +85,17 @@ class App(object):
 
     def call(self, command, *arguments):
         if command not in self.SUPPORTED_COMMANDS:
-            print ("Command `%s` is not supported, "
-                   "try one of following commands - %s " % (command,
-                                                            ', '.join(self.SUPPORTED_COMMANDS)))
+            print (colored('Command `', ERROR_COLOR) +
+                   colored(command, KEY_COLOR) +
+                   colored('` is not supported, "try one of following commands', ERROR_COLOR) +
+                   colored('-', SEPARATOR_COLOR) +
+                   colored(', '.join(self.SUPPORTED_COMMANDS), INFO_COLOR))
             return
         try:
             attr = getattr(self, command)
         except AttributeError:
-            print ("Command proc is not supported, "
-                   "try one of following commands %s " % str(self.SUPPORTED_COMMANDS))
+            print colored("Command `proc` is not supported, "
+                          "try one of following commands %s " % str(self.SUPPORTED_COMMANDS), ERROR_COLOR)
             return
         attr(*arguments)
         Store.close()
@@ -100,85 +103,106 @@ class App(object):
     @staticmethod
     def show(*args):
         if not args:
-            _exit('What to show?')
-        # print 'show called with args %s' % args
+            _exit(colored('What to show?', ERROR_COLOR))
         if len(args) > 1:
-            _exit('Too many arguments')
+            _exit(colored('Too many arguments', ERROR_COLOR))
         name = args[0]
         if name == 'all':
             if len(Store.data):
-                print "Showing all items"
+                print colored("Showing all items", SUCCESS_COLOR)
                 for name, value in Store.data.iteritems():
-                    print '%s : %s' % (name, value)
+                    print (colored(name, KEY_COLOR) +
+                           colored(' : ', SEPARATOR_COLOR) +
+                           colored(value, VALUE_COLOR))
                 return
             else:
-                print "Nothing to show"
+                print colored("Nothing to show", INFO_COLOR)
                 return
-        # print 'show called with %s arguments:%s' % (len(args), args)
         if name in Store.data:
-            print Store.data[name]
+            print colored(Store.data[name], VALUE_COLOR)
         else:
-            print "%s not present" % args[0]
+            print (colored("`", ERROR_COLOR) +
+                   colored(args[0], KEY_COLOR) +
+                   colored('` not present', ERROR_COLOR))
             from utils import did_you_mean
             guessed_key = did_you_mean(name, Store.data.keys())
-            print "Did you mean : %s" % guessed_key
-            print "%s : %s" % (guessed_key, Store.data[guessed_key])
-            # _exit('%s not present' % args[0])
+            print (colored("Did you mean", INFO_COLOR) +
+                   colored(" : ", SEPARATOR_COLOR) +
+                   colored(guessed_key, KEY_COLOR))
+            print (colored(guessed_key, KEY_COLOR) +
+                   colored(" : ", SEPARATOR_COLOR) +
+                   colored(Store.data[guessed_key], VALUE_COLOR))
 
     @staticmethod
     def add(*args):
         if not args:
-            print 'adding Nothing'
+            print colored('Adding Nothing', ERROR_COLOR)
             return
         # check if same name is present as a command
         name = args[0]
         if len(args) < 2:
-            print 'provide value for %s' % name
+            print (colored('Provide value for `', ERROR_COLOR) +
+                   colored(name, KEY_COLOR) +
+                   colored('`', ERROR_COLOR))
             return
         value = ' '.join(args[1:])
         # add as a command
         if name not in Store.data:
             Store.data[name] = value
-            print "Value %s added for item %s" % (value, name)
+            print (colored("Value ", SUCCESS_COLOR) +
+                   colored(value, INFO_COLOR) +
+                   colored(" added for item ", SUCCESS_COLOR) +
+                   colored(name, KEY_COLOR))
         else:
-            print "already present, use update(Not supported yet) if you want to change it"
+            print (colored("Already present, use `", ERROR_COLOR) +
+                   colored("update", KEY_COLOR) +
+                   colored("` if you want to change it", ERROR_COLOR))
 
     @staticmethod
     def delete(*args):
         if not args:
-            print 'Pass all to delete everything'
+            print (colored('Pass `', ERROR_COLOR) +
+                   colored('all', INFO_COLOR) +
+                   colored('` to delete everything', ERROR_COLOR))
             return
         if args[0] == 'all':
             items_to_be_deleted = len(Store.data)
             Store.data = {}
-            print 'Deleted everything(%s items)!' % items_to_be_deleted
+            print colored('Deleted everything(%s items)!' % items_to_be_deleted, SUCCESS_COLOR)
             return
         name = args[0]
 
         Store.data.pop(name, None)
-        print "Deleted %s" % name
+        print (colored('Deleted `', SUCCESS_COLOR) +
+               colored(name, KEY_COLOR) +
+               colored('`', SUCCESS_COLOR))
 
-    def update(self, *args):
+    @staticmethod
+    def update(*args):
         if not args:
-            print 'update what?'
+            print colored('update what?', ERROR_COLOR)
             return
         if len(args) < 2:
-            print "require at least 2 arguments"
+            print colored("require at least 2 arguments", ERROR_COLOR)
             return
         name = args[0]
         value = ' '.join(args[1:])
 
         if name not in Store.data:
-            print "%s not in Store, adding" % name
+
+            print (colored(name, KEY_COLOR) +
+                   colored(" not in Store", ERROR_COLOR))
             from utils import did_you_mean
             guessed_name = did_you_mean(name, Store.data.keys())
-            _exit("Did you mean : %s" % guessed_name)
+            _exit(colored("Did you mean : ", INFO_COLOR) +
+                  colored(guessed_name, KEY_COLOR))
             return
         else:
             Store.data[name] = value
 
-    def help(self):
-        print HELP
+    @staticmethod
+    def help():
+        print colored(HELP, SUCCESS_COLOR)
 
 
 

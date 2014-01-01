@@ -19,3 +19,10 @@ Usage ---  kaboom [-h] action [...]
   all other documentation is located at:
     https://github.com/vinu76jsr/kaboom
   Inspired by https://github.com/holman/boom'''
+
+ERROR_COLOR = 'red'
+SUCCESS_COLOR = 'green'
+KEY_COLOR = 'yellow'
+VALUE_COLOR = 'magenta'
+SEPARATOR_COLOR = 'blue'
+INFO_COLOR = 'blue'
